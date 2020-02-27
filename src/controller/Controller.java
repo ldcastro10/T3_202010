@@ -1,6 +1,7 @@
 package controller;
 
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import model.Comparendo;
@@ -17,7 +18,7 @@ public class Controller {
 	
 	/* Instancia de la Vista*/
 	private View view;
-	private ILinkedList<Comparendo> f;
+	
 	private Comparable<Comparendo>[] consulta;
 	/**
 	 * Crear la vista y el modelo del proyecto
@@ -27,7 +28,8 @@ public class Controller {
 	{
 		view = new View();
 		modelo = new Modelo();
-		f = new LinkedList<Comparendo>();
+	
+		
 	}
 		
 	public void run() 
@@ -45,17 +47,17 @@ public class Controller {
 				    modelo = new Modelo();
 					
 				    long start = System.currentTimeMillis();
-				   f =  modelo.cargarlinkedList();
+				    consulta= modelo.dearreglo();
 				    long end = System.currentTimeMillis();
-				    
+				    		
+				    		
 				    view.printMessage("Tiempo de carga (seg): " + (end-start)/1000.0);
-					view.printMessage("Datos cargados: " + f.getSize() + "\n");
-			   view.printMessage("Primer dato: " + f.get(0).getObject() + "\n");
-			 view.printMessage("Ultimo dato: " + (f.get(f.getSize() - 1 )).getObject() + "\n");
+					view.printMessage("Datos cargados: " + consulta.length + "\n");
+			   view.printMessage("Primer dato: " + consulta[0] + "\n");
+			 view.printMessage("Ultimo dato: " + consulta[1] + "\n");
 					
 				
-			//	        for( node = linkedList.get(0); node != null; node = node.getNext() )
-				        
+			
 
 				   break;
 					
@@ -120,7 +122,7 @@ public class Controller {
 					break;
 
 				case 4: 
-					System.out.println("5. Ordenar consulta ascendentemente usando QuickSort");
+					System.out.println("4. Ordenar consulta ascendentemente usando QuickSort");
 					if(consulta != null)
 					{
 						long tiempo = modelo.sortingBenchmarkOptionA(consulta,

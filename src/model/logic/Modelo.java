@@ -34,22 +34,22 @@ public class Modelo {
 	public static String PATH = "./data/comparendos_dei_2018.geojson";
 	//	public static String PATH = "./data/comparendos_dei_2018.geojson";
 	public ILinkedList<Comparendo> linkedList;
+	public Comparendo[] lista=null;
+	public Comparable<Comparendo>[] cargarlinkedList() {
 
-	public LinkedList<Comparendo> cargarlinkedList() {
 
 
-
-		linkedList = new LinkedList<Comparendo>();
+		
 
 		JsonReader reader;
 		try {
 			reader = new JsonReader(new FileReader(PATH));
 			JsonElement elem = JsonParser.parseReader(reader);
 			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
-
+			lista=new Comparendo[e2.size()];
 
 			SimpleDateFormat parser=new SimpleDateFormat("yyyy/MM/dd");
-
+			int i=0;
 			for(JsonElement e: e2) {
 				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
 
@@ -70,10 +70,9 @@ public class Modelo {
 						.get(1).getAsDouble();
 
 				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, DES_INFRAC, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, LOCALIDAD, longitud, latitud);
-				Node<Comparendo> node = new Node<Comparendo>(c);
-				linkedList.append(node);
-
-
+				
+				lista[i]=c;
+				i++;
 
 			}
 
@@ -81,20 +80,22 @@ public class Modelo {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		return (LinkedList<Comparendo>) linkedList;	
+		return lista;	
 
 	}
-
-	public  Comparable<Comparendo>[] dearreglo()
+	public  Comparendo[] dearreglo()
 	{
-		LinkedList<Comparendo> list = cargarlinkedList();
-		Comparendo[] array = new Comparendo[list.getSize()];
-		for(int i =0 ;i< list.getSize(); i++ )
+		
+		Comparendo[] array1 = (Comparendo[]) cargarlinkedList();
+		Comparendo[] array = new Comparendo[lista.length];
+		for(int i =0 ;i< array1.length; i++ )
 		{
-			array[i] =  list.get(i).getObject();
+			array[i] =  array1[i];
+			
 		}
 		return array;
 	}
+
 	public long sortingBenchmarkOptionA(Comparable[] array, String sort)
 	{
 		switch(sort)
