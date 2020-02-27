@@ -14,12 +14,10 @@ public class View
 	    
 		public void printMenu()
 		{
-			System.out.println("1. Crear Arreglo Dinamico de Strings");
-			System.out.println("2. Agregar String");
-			System.out.println("3. Buscar String");
-			System.out.println("4. Eliminar String");
-			System.out.println("5. Imprimir el Arreglo");
-			System.out.println("6. Exit");
+			System.out.println("1. Cargar Datos");
+			System.out.println("2. Ordenar consulta ascendentemente con ShellSort.");
+			System.out.println("3. Ordenar consulta ascendentemente usando MergeSort.");
+			System.out.println("4. Ordenar consulta ascendentemente usando QuickSort.");
 			System.out.println("Dar el numero de opcion a resolver, luego oprimir tecla Return: (e.g., 1):");
 		}
 

@@ -1,72 +1,121 @@
 package model.logic;
 
-import model.data_structures.ArregloDinamico;
-import model.data_structures.IArregloDinamico;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ArrayList;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
+import model.Comparendo;
+import model.data_structures.ILinkedList;
+import model.data_structures.Node;
+
+import model.data_structures.ShellSort;
+import model.data_structures.QuickSort;
+import model.data_structures.MergeSort;
+import model.data_structures.LinkedList;
+
 
 /**
  * Definicion del modelo del mundo
  *
  */
 public class Modelo {
-	/**
-	 * Atributos del modelo del mundo
-	 */
-	private IArregloDinamico datos;
-	
-	/**
-	 * Constructor del modelo del mundo con capacidad predefinida
-	 */
-	public Modelo()
-	{
-		datos = new ArregloDinamico(7);
-	}
-	
-	/**
-	 * Constructor del modelo del mundo con capacidad dada
-	 * @param tamano
-	 */
-	public Modelo(int capacidad)
-	{
-		datos = new ArregloDinamico(capacidad);
-	}
-	
-	/**
-	 * Servicio de consulta de numero de elementos presentes en el modelo 
-	 * @return numero de elementos presentes en el modelo
-	 */
-	public int darTamano()
-	{
-		return datos.darTamano();
+
+	public static final String SHELLSORT = "ShellSort";
+	public static final String QUICKSORT = "QuickSort";
+	public static final String MERGESORT = "MergeSort";
+	public static String PATH = "./data/comparendos_dei_2018.geojson";
+	//	public static String PATH = "./data/comparendos_dei_2018.geojson";
+	public ILinkedList<Comparendo> linkedList;
+
+	public LinkedList<Comparendo> cargarlinkedList() {
+
+
+
+		linkedList = new LinkedList<Comparendo>();
+
+		JsonReader reader;
+		try {
+			reader = new JsonReader(new FileReader(PATH));
+			JsonElement elem = JsonParser.parseReader(reader);
+			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
+
+
+			SimpleDateFormat parser=new SimpleDateFormat("yyyy/MM/dd");
+
+			for(JsonElement e: e2) {
+				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
+
+				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();	
+				Date FECHA_HORA = parser.parse(s); 
+
+				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETE").getAsString();
+				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHI").getAsString();
+				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVI").getAsString();
+				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
+				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRAC").getAsString();	
+				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+
+				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(0).getAsDouble();
+
+				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(1).getAsDouble();
+
+				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, DES_INFRAC, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, LOCALIDAD, longitud, latitud);
+				Node<Comparendo> node = new Node<Comparendo>(c);
+				linkedList.append(node);
+
+
+
+			}
+
+		} catch (FileNotFoundException | ParseException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return (LinkedList<Comparendo>) linkedList;	
+
 	}
 
-	/**
-	 * Requerimiento de agregar dato
-	 * @param dato
-	 */
-	public void agregar(String dato)
-	{	
-		datos.agregar(dato);
-	}
-	
-	/**
-	 * Requerimiento buscar dato
-	 * @param dato Dato a buscar
-	 * @return dato encontrado
-	 */
-	public String buscar(String dato)
+	public  Comparable<Comparendo>[] dearreglo()
 	{
-		return datos.buscar(dato);
+		LinkedList<Comparendo> list = cargarlinkedList();
+		Comparendo[] array = new Comparendo[list.getSize()];
+		for(int i =0 ;i< list.getSize(); i++ )
+		{
+			array[i] =  list.get(i).getObject();
+		}
+		return array;
 	}
-	
-	/**
-	 * Requerimiento eliminar dato
-	 * @param dato Dato a eliminar
-	 * @return dato eliminado
-	 */
-	public String eliminar(String dato)
+	public long sortingBenchmarkOptionA(Comparable[] array, String sort)
 	{
-		return datos.eliminar(dato);
+		switch(sort)
+		{
+		case SHELLSORT:
+			long shellStart = System.currentTimeMillis();
+			ShellSort.sort(array);
+			long shellEnd = System.currentTimeMillis();
+			return shellEnd - shellStart;
+		case QUICKSORT:
+			long quickStart = System.currentTimeMillis();
+			QuickSort.sort(array);
+			long quickEnd = System.currentTimeMillis();
+			return quickEnd - quickStart;
+		case MERGESORT:
+			long mergeStart = System.currentTimeMillis();
+			MergeSort.sort(array);
+			long mergeEnd = System.currentTimeMillis();
+			return mergeEnd - mergeStart;
+		}
+		return 0;
 	}
-
 
 }
